@@ -1,0 +1,34 @@
+.card-text {
+    font-size: 1.2em;
+}
+
+/*.module_details {*/
+/*    display: block;*/
+/*    max-height: 0;*/
+/*	transform: scale(1, 0);*/
+/*    transition: max-height 500ms,*/
+/*                transform 500ms;*/
+/*}*/
+
+/*.card:hover .module_details {*/
+/*    max-height: 999px;*/
+/*	transform: scale(1);*/
+/*    transition:  max-height 500ms,*/
+/*                 transform 500ms;*/
+/*}*/
+
+/*.card-body {*/
+/*    position: relative;*/
+/*}*/
+
+.text-block-test {
+    display: none;
+    background-color: black;
+    opacity: 0.8;
+    color: white;
+    font-size: 0.5vw;
+}
+
+form.oe_product_cart:hover .text-block-test {
+    display: block;
+}
