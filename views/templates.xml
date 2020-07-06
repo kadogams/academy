@@ -6,8 +6,8 @@
                 <link rel="stylesheet" type="text/css" href="/academy/static/src/scss/inscription.scss"/>
             </xpath>
             <xpath expr="//script[last()]" position="after">
-                <script type="text/javascript" src="/academy/static/src/js/fittext.js"/>
-                <script type="text/javascript" src="/academy/static/src/js/fittext.js"/>
+                <script type="text/javascript" src="/academy/static/lib/Fittext.js/jquery.fittext.js"/>
+                <script type="text/javascript" src="/academy/static/src/js/custom.js"/>
             </xpath>
         </template>
 

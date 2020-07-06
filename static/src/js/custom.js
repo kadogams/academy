@@ -1,4 +1,4 @@
-odoo.define('academy.fittext', function (require) {
+odoo.define('academy.custom', function (require) {
     console.log('AbstractAction');
     $("#products_grid .description-hoverable").fitText();
 });
