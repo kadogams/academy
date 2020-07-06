@@ -7,6 +7,7 @@
             </xpath>
             <xpath expr="//script[last()]" position="after">
                 <script type="text/javascript" src="/academy/static/src/js/fittext.js"/>
+                <script type="text/javascript" src="/academy/static/src/js/fittext.js"/>
             </xpath>
         </template>
 
