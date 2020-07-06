@@ -1,14 +1,11 @@
 <odoo>
     <data>
 
-        <template id="assets_frontend" name="Academy assets" inherit_id="website.assets_frontend">
-            <xpath expr="." position="inside">
-                <link rel="stylesheet" type="text/css" href="/academy/static/src/css/inscription.css"/>
+        <template id="assets_frontend" name="Academy Assets" inherit_id="website.assets_frontend">
+            <xpath expr="//link[last()]" position="after">
+                <link rel="stylesheet" type="text/css" href="/academy/static/src/scss/inscription.scss"/>
             </xpath>
-        </template>
-
-        <template id="assets_backend" name="Academy assets" inherit_id="web.assets_backend">
-            <xpath expr="." position="inside">
+            <xpath expr="//script[last()]" position="after">
                 <script type="text/javascript" src="/academy/static/src/js/fittext.js"/>
             </xpath>
         </template>
@@ -21,23 +18,24 @@
             </xpath>
         </template>
 
-        <!-- Update product tiles on /shop -->
+        <!-- Update /shop product tiles -->
         <template id="custom_products_item" name="Custom Products item" inherit_id="website_sale.products_item">
-            <!-- Add description tooltip on products -->
+            <!-- Add description tooltip -->
             <xpath expr="//form[hasclass('oe_product_cart')]" position="attributes">
-                <t t-if="product.description_tooltip and product.id % 2 == 0">
+                <t t-if="product.description_tooltip and product.id != 2>">
                     <attribute name="data-toggle">tooltip</attribute>
                     <attribute name="data-html">true</attribute>
                     <attribute name="t-att-title">product.description_tooltip</attribute>
                 </t>
             </xpath>
-            <!-- Add description tooltip on products -->
+            <!-- Add description on hover -->
             <xpath expr="//div[hasclass('oe_product_image')]/a" position="attributes">
                     <attribute name="class">d-block h-100 position-relative</attribute>
             </xpath>
             <xpath expr="//div[hasclass('oe_product_image')]/a/span" position="before">
-                 <t t-if="product.description_tooltip and product.id % 2 != 0">
-                    <div class="text-block-test position-absolute h-100 w-100 rounded p-3 text-left" t-field="product.description_tooltip"/>
+                 <t t-if="product.description_tooltip and product.id > 1">
+<!--                    <div class="description-hoverable position-absolute h-100 w-100 rounded p-3 text-left" t-field="product.description_tooltip"/>-->
+                    <div class="description-hoverable rounded p-3" t-field="product.description_tooltip"/>
                  </t>
             </xpath>
         </template>
