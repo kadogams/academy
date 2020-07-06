@@ -21,14 +21,27 @@
 /*    position: relative;*/
 /*}*/
 
-.text-block-test {
-    display: none;
-    background-color: black;
-    opacity: 0.8;
-    color: white;
-    font-size: 0.5vw;
-}
 
-form.oe_product_cart:hover .text-block-test {
-    display: block;
+#products_grid {
+  .description-hoverable {
+    //display: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.3s, opacity 0.3s;
+
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    //opacity: 0.8;
+    color: white;
+    text-align: left;
+  }
+
+  form.oe_product_cart:hover .description-hoverable {
+    //display: block;
+    visibility: visible;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+  }
 }
