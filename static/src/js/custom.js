@@ -1,6 +1,6 @@
 odoo.define('academy.custom', function (require) {
     console.log('AbstractAction');
-    $("#products_grid .description-hoverable").fitText();
+    // $("#products_grid .description-hoverable").fitText();
 });
 
 // odoo.define('academy.main', function (require) {

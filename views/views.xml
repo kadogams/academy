@@ -1,27 +1,61 @@
 <odoo>
     <data>
+        <record id="product_template_form_view_with_description_tooltip" model="ir.ui.view">
+            <field name="name">product.template.common.form.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//page[@name='sales']" position="inside">
+                    <group string="Tooltip Description" name="tooltip">
+                        <field name="description_tooltip" nolabel="1" placeholder="This note is displayed when hovering over the product on the shop page."/>
+                    </group>
+                </xpath>
+
+                <xpath expr="//page[@name='inventory']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('type', 'in', ['service', 'event'])]}</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="product_normal_form_view_with_event_ids" model="ir.ui.view">
+        	<field name="name">product.product.form.inherit.event.set</field>
+        	<field name="model">product.product</field>
+        	<field name="inherit_id" ref="product.product_normal_form_view"/>
+        	<field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Event Set" name="event_set" attrs="{'invisible':[('type', '!=', 'event')]}">
+                        <group name="event_set">
+                            <field name="event_ids" widget="many2many_tags"/>
+                            <field name="event_seats_available"/>
+                        </group>
+                    </page>
+                </xpath>
+        	</field>
+        </record>
+
+        <record id="product_variant_easy_edit_view_with_event_ids" model="ir.ui.view">
+        	<field name="name">product.product.view.form.easy.inherit.event.set</field>
+        	<field name="model">product.product</field>
+        	<field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+        	<field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group name="event_set" string="Event Set" attrs="{'invisible':[('type', '!=', 'event')]}">
+                        <field name="event_ids" widget="many2many_tags"/>
+                        <field name="event_seats_available"/>
+                    </group>
+                </xpath>
+        	</field>
+        </record>
 
         <record id="product_attribute_view_form_with_limit_date" model="ir.ui.view">
         	<field name="name">product.attribute.form.inherit</field>
         	<field name="model">product.attribute</field>
         	<field name="inherit_id" ref="product.product_attribute_view_form"/>
         	<field name="arch" type="xml">
-<!--                <xpath expr="//field[@name='value_ids']/tree/field[@name='name']" position="after">-->
                 <xpath expr="//field[@name='value_ids']/tree" position="inside">
                     <field name="limit_date"/>
-                </xpath>
-        	</field>
-        </record>
-
-        <record id="product_template_form_view_with_description_tooltip" model="ir.ui.view">
-        	<field name="name">product.template.common.form.inherit</field>
-        	<field name="model">product.template</field>
-        	<field name="inherit_id" ref="product.product_template_form_view"/>
-        	<field name="arch" type="xml">
-                <xpath expr="//page[@name='sales']" position="inside">
-                    <group string="Tooltip Description" name="tooltip">
-                        <field name="description_tooltip" nolabel="1" placeholder="This note is displayed when hovering over the product on the shop page."/>
-                    </group>
                 </xpath>
         	</field>
         </record>
