@@ -14,6 +14,23 @@ class UpdateBillingFields(WebsiteSale):
         return ["name", "email", "phone"]
 
 
+class EventSetController(http.Controller):
+
+    # @http.route(['/event/<model("event.event"):event>/registration/new'], type='json', auth="public", methods=['POST'], website=True)
+    def registration_new(self, event, **post):
+        tickets = self._process_tickets_details(post)
+        availability_check = True
+        if event.seats_availability == 'limited':
+            ordered_seats = 0
+            for ticket in tickets:
+                ordered_seats += ticket['quantity']
+            if event.seats_available < ordered_seats:
+                availability_check = False
+        if not tickets:
+            return False
+        return request.env['ir.ui.view'].render_template("website_event.registration_attendee_details", {'tickets': tickets, 'event': event, 'availability_check': availability_check})
+
+
 class Academy(http.Controller):
     @http.route('/inscription/', auth='public', website=True)
     def index(self, **kw):
@@ -22,7 +39,7 @@ class Academy(http.Controller):
         for x in tmp:
             print(tmp.name)
 
-        products = http.request.env['product.template']
+        # products = http.request.env['product.template']
         # for p in products.search([]):
         #     print(p.name)
         #     for ptal in p.attribute_line_ids.value_ids:

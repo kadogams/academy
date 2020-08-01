@@ -63,11 +63,11 @@
             </xpath>
         </template>
 
-        <!-- Update event cards -->
-        <template id="custom_events_list" name="Custom Events List" inherit_id="website_event.events_list">
-            <!-- Remove footer -->
-            <xpath expr="//article//footer" position="replace"/>
-        </template>
+<!--        &lt;!&ndash; Update event cards &ndash;&gt;-->
+<!--        <template id="custom_events_list" name="Custom Events List" inherit_id="website_event.events_list">-->
+<!--            &lt;!&ndash; Remove footer &ndash;&gt;-->
+<!--            <xpath expr="//article//footer" position="replace"/>-->
+<!--        </template>-->
 
         <template id="inscription" name="Inscription">
             <link href="/academy/static/src/css/inscription.css" rel="stylesheet" type="text/css"/>
