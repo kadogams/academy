@@ -13,7 +13,7 @@ class SaleOrderLine(models.Model):
         """
         """
         # if confirm:
-        print('aaaaaaaaaaaaaaaaa')
+        print('\n_update_registrations')
         Registration = self.env['event.registration'].sudo()
 
 

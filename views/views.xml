@@ -76,8 +76,6 @@
 <!--        	</field>-->
 <!--        </record>-->
 
-
-
 <!--        <record id="product_product_view_form_easy_inherit_website_sale_with_limit_date" model="ir.ui.view">-->
 <!--            <field name="name">product.product.view.form.easy.inherit.website_sale.2</field>-->
 <!--            <field name="model">product.product</field>-->

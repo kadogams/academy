@@ -9,6 +9,7 @@ from odoo.exceptions import ValidationError
 class ProductTemplate(models.Model):
     """Add a description tooltip attribute to the product template. The description will be displayed as a
     Bootstrap tooltip when hovering over the product on the shop page.
+
     """
     _inherit = "product.template"
 
@@ -21,6 +22,7 @@ class ProductTemplate(models.Model):
 
     def _get_description_tooltip(self):
         """Return its `description_tooltip` attribute value.
+
         """
         return self.description_tooltip
 
@@ -29,15 +31,26 @@ class ProductTemplate(models.Model):
                                   help="If checked this product automatically creates an event registration at the "
                                        "sales order confirmation.")
 
+    @api.constrains('event_set_ok', 'type')
+    def _check_event_set_type(self):
+        """Check if the type of an Event Set is a Service.
+        """
+        if self.event_set_ok and self.type != 'service':
+            raise ValidationError("The type of an Event Set must be a Service")
+
+    @api.constrains('event_set_ok', 'product_variant_ids.event_ids')
+    def _check_event_set_variants(self):
+        """Check if the there is no existing relationships between the product variants of an Event Set and Event
+        records before modifying the field.
+        """
+        if not self.event_set_ok and self.product_variant_ids and self.product_variant_ids.event_ids:
+            raise ValidationError("All existing relationships between the product variants of an Event Set and Event "
+                                  "records have to be removed before modifying Event Set field")
+
     @api.onchange('event_set_ok')
     def _onchange_event_set_ok(self):
         if self.event_set_ok:
             self.type = 'service'
-
-    @api.constrains('event_set_ok', 'type')
-    def _check_description(self):
-        if self.event_set_ok and self.type != 'service':
-            raise ValidationError("The type of an Event Set must be a Service")
 
 
 class ProductProduct(models.Model):
@@ -55,29 +68,10 @@ class ProductProduct(models.Model):
 
     @api.onchange('event_set_ok')
     def _onchange_event_set_ok(self):
-        """Redirection, inheritance mechanism hides the method on the model."""
+        """Redirection, inheritance mechanism hides the method on the model.
+        """
         if self.event_set_ok:
             self.type = 'service'
-            # Remove all records from event_ids
-            self.event_ids = [(5, 0, 0)]
-        print('\nonchange: ', self.event_seats_availability, self.event_seats_available)
-
-    # maybe use seats_expected?
-    @api.depends('event_set_ok', 'event_ids.seats_availability', 'event_ids.seats_available')
-    def _compute_event_seats(self):
-        print('\n_compute_event_seats')
-        for record in self:
-            limited = False
-            qty = sys.maxsize
-            print('record: ', record.id, record.name)
-            for event in record.event_ids:
-                print('\tevent: :', event.id, event.name, event.seats_availability, event.seats_available)
-                if event.seats_availability == 'limited' and event.seats_available < qty:
-                    limited = True
-                    qty = event.seats_available
-            record.event_seats_availability = limited and 'limited' or 'unlimited'
-            record.event_seats_available = limited and qty or 0
-            print('\t', record.event_seats_availability, record.event_seats_available)
 
     @api.depends('event_ids.date_tz', 'event_ids.date_begin')
     def _compute_event_is_expired(self):
@@ -92,6 +86,23 @@ class ProductProduct(models.Model):
                     record.event_is_expired = True
                     break
             print(record.name, record.event_is_expired)
+
+    # maybe use seats_expected?
+    @api.depends('event_ids.seats_availability', 'event_ids.seats_available')
+    def _compute_event_seats(self):
+        print('\n_compute_event_seats')
+        for record in self:
+            limited = False
+            qty = sys.maxsize
+            print('record: ', record.id, record.name, [x.name for x in record.product_template_attribute_value_ids])
+            for event in record.event_ids:
+                print('\tevent: :', event.id, event.name, event.seats_availability, event.seats_available)
+                if event.seats_availability == 'limited' and event.seats_available < qty:
+                    limited = True
+                    qty = event.seats_available
+            record.event_seats_availability = limited and 'limited' or 'unlimited'
+            record.event_seats_available = limited and qty or 0
+            print('\t', record.event_seats_availability, record.event_seats_available)
 
 
 class ProductAttributeValue(models.Model):
