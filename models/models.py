@@ -34,14 +34,16 @@ class ProductTemplate(models.Model):
     @api.constrains('event_set_ok', 'type')
     def _check_event_set_type(self):
         """Check if the type of an Event Set is a Service.
+
         """
         if self.event_set_ok and self.type != 'service':
             raise ValidationError("The type of an Event Set must be a Service")
 
     @api.constrains('event_set_ok', 'product_variant_ids.event_ids')
     def _check_event_set_variants(self):
-        """Check if the there is no existing relationships between the product variants of an Event Set and Event
+        """Check if the there is not any existing relationships between the product variants of an Event Set and Event
         records before modifying the field.
+
         """
         if not self.event_set_ok and self.product_variant_ids and self.product_variant_ids.event_ids:
             raise ValidationError("All existing relationships between the product variants of an Event Set and Event "
@@ -69,6 +71,7 @@ class ProductProduct(models.Model):
     @api.onchange('event_set_ok')
     def _onchange_event_set_ok(self):
         """Redirection, inheritance mechanism hides the method on the model.
+
         """
         if self.event_set_ok:
             self.type = 'service'
@@ -107,6 +110,7 @@ class ProductProduct(models.Model):
 
 class ProductAttributeValue(models.Model):
     """Add a limit date attribute to the product attributes.
+
     """
     _inherit = "product.attribute.value"
 
@@ -115,6 +119,7 @@ class ProductAttributeValue(models.Model):
 
 class ProductTemplateAttributeValue(models.Model):
     """Take into account the `limit_date` to define if the attribute is active or not.
+
     """
     _inherit = "product.template.attribute.value"
 
