@@ -1,5 +1,5 @@
 odoo.define('academy.custom', function (require) {
-    console.log('AbstractAction');
+    console.log('test');
     // $("#products_grid .description-hoverable").fitText();
 });
 

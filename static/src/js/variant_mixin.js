@@ -1,4 +1,4 @@
-odoo.define('website_sale_stock.VariantMixin', function (require) {
+odoo.define('academy.VariantMixin', function (require) {
 'use strict';
 
 var VariantMixin = require('sale.VariantMixin');
@@ -26,7 +26,7 @@ var xml_load = ajax.loadXML(
  * @param {$.Element} $parent
  * @param {Array} combination
  */
-VariantMixin._onChangeCombinationStock = function (ev, $parent, combination) {
+VariantMixin._onChangeCombinationEventSet = function (ev, $parent, combination) {
     var product_id = 0;
     // needed for list view of variants
     if ($parent.find('input.product_id:checked').length) {
@@ -43,6 +43,9 @@ VariantMixin._onChangeCombinationStock = function (ev, $parent, combination) {
     }
 
     var qty = $parent.find('input[name="add_qty"]').val();
+
+    console.log(" qty:" + qty);
+    console.log(combination)
 
     $parent.find('#add_to_cart').removeClass('out_of_stock');
     $parent.find('#buy_now').removeClass('out_of_stock');
@@ -84,7 +87,7 @@ publicWidget.registry.WebsiteSale.include({
      */
     _onChangeCombination: function (){
         this._super.apply(this, arguments);
-        VariantMixin._onChangeCombinationStock.apply(this, arguments);
+        VariantMixin._onChangeCombinationEventSet.apply(this, arguments);
     }
 });
 
