@@ -1,3 +1,3 @@
-# odoo-custom-module-rem
+# odoo-event-set
 
 Playing around with Odoo
