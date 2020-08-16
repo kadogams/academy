@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 from odoo import http
 from odoo.addons.website_sale.controllers.main import WebsiteSale
-import logging
-
-
-_logger = logging.getLogger(__name__)
 
 
 class UpdateBillingFields(WebsiteSale):
-    """Override the mandatory fields during the billing process.
-    """
     def _get_mandatory_billing_fields(self):
+        """Override the mandatory fields during the billing process.
+        """
         return ["name", "email", "phone"]
 
 

@@ -3,6 +3,7 @@
 import sys
 
 from odoo import api, fields, models
+from odoo.addons.website.models import ir_http
 from odoo.exceptions import ValidationError
 
 
@@ -30,6 +31,11 @@ class ProductTemplate(models.Model):
     event_set_ok = fields.Boolean(string='Is an Event Set',
                                   help="If checked this product automatically creates an event registration at the "
                                        "sales order confirmation.")
+    event_availability = fields.Selection([
+        ('always', 'Show availability on website and prevent sales if not enough stock'),
+        ('threshold', 'Show availability below a threshold and prevent sales if not enough available'),
+    ], string='Event Availability', help='Adds an event availability status on the web product page.', default='always')
+    event_available_threshold = fields.Integer(string='Availability Threshold', default=5)
 
     @api.constrains('event_set_ok', 'type')
     def _check_event_set_type(self):
@@ -54,6 +60,44 @@ class ProductTemplate(models.Model):
         if self.event_set_ok:
             self.type = 'service'
 
+    def _get_combination_info(self, combination=False, product_id=False, add_qty=1, pricelist=False,
+                              parent_combination=False, only_template=False):
+        """Add some fields to the returned dict.
+
+        """
+        combination_info = super(ProductTemplate, self)._get_combination_info(
+            combination=combination, product_id=product_id, add_qty=add_qty, pricelist=pricelist,
+            parent_combination=parent_combination, only_template=only_template
+        )
+
+        if not self.env.context.get('website_sale_event_set_get_quantity'):
+            return combination_info
+
+        if combination_info['product_id']:
+            product = self.env['product.product'].sudo().browse(combination_info['product_id'])
+            combination_info.update({
+                'event_set_ok': product.event_set_ok,
+                'event_seats_availability': product.event_seats_availability,
+                'event_seats_available': product.event_seats_available,
+                'event_availability': product.event_availability,
+                'event_available_threshold': product.event_available_threshold,
+                'product_template': product.product_tmpl_id.id,
+                'cart_qty': product.cart_qty,
+                'uom_name': product.uom_id.name,
+            })
+        else:
+            product_template = self.sudo()
+            combination_info.update({
+                'virtual_available': 0,
+                'event_set_ok': product_template.event_set_ok,
+                'event_availability': product_template.event_availability,
+                'event_available_threshold': product_template.event_available_threshold,
+                'product_template': product_template.id,
+                'cart_qty': 0
+            })
+
+        return combination_info
+
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
@@ -67,6 +111,7 @@ class ProductProduct(models.Model):
                                            compute='_compute_event_seats')
     event_is_expired = fields.Boolean('Event Expired', readonly=True, compute='_compute_event_is_expired',
                                       help='Check if one or more events are expired')
+    cart_qty = fields.Integer(compute='_compute_cart_qty')
 
     @api.onchange('event_set_ok')
     def _onchange_event_set_ok(self):
@@ -106,6 +151,15 @@ class ProductProduct(models.Model):
             record.event_seats_availability = limited and 'limited' or 'unlimited'
             record.event_seats_available = limited and qty or 0
             print('\t', record.event_seats_availability, record.event_seats_available)
+
+    def _compute_cart_qty(self):
+        website = ir_http.get_request_website()
+        if not website:
+            self.cart_qty = 0
+            return
+        cart = website.sale_get_order()
+        for product in self:
+            product.cart_qty = sum(cart.order_line.filtered(lambda p: p.product_id.id == product.id).mapped('product_uom_qty')) if cart else 0
 
 
 class ProductAttributeValue(models.Model):
