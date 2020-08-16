@@ -16,7 +16,7 @@ class WebsiteSaleEventSet(WebsiteSale):
         order = request.website.sale_get_order()
         values = []
         for line in order.order_line:
-            if line.event_set_ok and line.product_id.event_seats_availability == 'limited':
+            if line.event_set_ok and line.prqqoduct_id.event_seats_availability == 'limited':
                 cart_qty = int(sum(order.order_line.filtered(lambda p: p.product_id.id == line.product_id.id).mapped('product_uom_qty')))
                 avl_qty = line.product_id.event_seats_available
                 if cart_qty > avl_qty:
