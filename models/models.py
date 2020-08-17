@@ -32,9 +32,9 @@ class ProductTemplate(models.Model):
                                   help="If checked this product automatically creates an event registration at the "
                                        "sales order confirmation.")
     event_availability = fields.Selection([
-        ('always', 'Show availability on website and prevent sales if not enough stock'),
-        ('threshold', 'Show availability below a threshold and prevent sales if not enough available'),
-    ], string='Event Availability', help='Adds an event availability status on the web product page.', default='always')
+        ('always', 'Show availability on website'),
+        ('threshold', 'Show availability below a threshold'),
+    ], string='Event Availability', help='Adds an event availability status on the web product page.')
     event_available_threshold = fields.Integer(string='Availability Threshold', default=5)
 
     @api.constrains('event_set_ok', 'type')
@@ -62,7 +62,7 @@ class ProductTemplate(models.Model):
 
     def _get_combination_info(self, combination=False, product_id=False, add_qty=1, pricelist=False,
                               parent_combination=False, only_template=False):
-        """Add some fields to the returned dict.
+        """Override function in order to add information.
 
         """
         combination_info = super(ProductTemplate, self)._get_combination_info(
@@ -76,9 +76,9 @@ class ProductTemplate(models.Model):
         if combination_info['product_id']:
             product = self.env['product.product'].sudo().browse(combination_info['product_id'])
             combination_info.update({
-                'event_set_ok': product.event_set_ok,
                 'event_seats_availability': product.event_seats_availability,
                 'event_seats_available': product.event_seats_available,
+                'event_set_ok': product.event_set_ok,
                 'event_availability': product.event_availability,
                 'event_available_threshold': product.event_available_threshold,
                 'product_template': product.product_tmpl_id.id,
@@ -88,7 +88,8 @@ class ProductTemplate(models.Model):
         else:
             product_template = self.sudo()
             combination_info.update({
-                'virtual_available': 0,
+                # 'event_seats_availability': 'unlimited',
+                # 'event_seats_available': 0,
                 'event_set_ok': product_template.event_set_ok,
                 'event_availability': product_template.event_availability,
                 'event_available_threshold': product_template.event_available_threshold,

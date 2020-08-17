@@ -7,7 +7,7 @@ var ajax = require('web.ajax');
 var core = require('web.core');
 var QWeb = core.qweb;
 var xml_load = ajax.loadXML(
-    '/website_sale_stock/static/src/xml/website_sale_stock_product_availability.xml',
+    '/academy/static/src/xml/event_set_product_availability.xml',
     QWeb
 );
 
@@ -44,45 +44,46 @@ VariantMixin._onChangeCombinationEventSet = function (ev, $parent, combination) 
 
     var qty = $parent.find('input[name="add_qty"]').val();
 
-    console.log(" qty:" + qty);
-    console.log(combination)
-
     $parent.find('#add_to_cart').removeClass('out_of_stock');
     $parent.find('#buy_now').removeClass('out_of_stock');
-    if (combination.product_type === 'product' && _.contains(['always', 'threshold'], combination.inventory_availability)) {
-        combination.virtual_available -= parseInt(combination.cart_qty);
-        if (combination.virtual_available < 0) {
-            combination.virtual_available = 0;
+    if (combination.event_set_ok && combination.event_seats_availability === "limited") {
+        combination.event_seats_available -= parseInt(combination.cart_qty);
+        if (combination.event_seats_available < 0) {
+            combination.event_seats_available = 0;
         }
         // Handle case when manually write in input
-        if (qty > combination.virtual_available) {
+        if (qty > combination.event_seats_available) {
             var $input_add_qty = $parent.find('input[name="add_qty"]');
-            qty = combination.virtual_available || 1;
+            qty = combination.event_seats_available || 1;
             $input_add_qty.val(qty);
         }
-        if (qty > combination.virtual_available
-            || combination.virtual_available < 1 || qty < 1) {
+        if (qty > combination.event_seats_available
+            || combination.event_seats_available < 1 || qty < 1) {
             $parent.find('#add_to_cart').addClass('disabled out_of_stock');
             $parent.find('#buy_now').addClass('disabled out_of_stock');
         }
     }
 
+    console.log(combination)
     xml_load.then(function () {
         $('.oe_website_sale')
-            .find('.availability_message_' + combination.product_template)
+            .find('.event_availability_message_' + combination.product_template)
             .remove();
 
         var $message = $(QWeb.render(
-            'website_sale_stock.product_availability',
+            'academy.product_availability',
             combination
         ));
-        $('div.availability_messages').html($message);
+        console.log("bbb", $message)
+
+        $('div.event_availability_messages').html($message);
+        // $('strong.attribute_name').html("ayayaya");
     });
 };
 
 publicWidget.registry.WebsiteSale.include({
     /**
-     * Adds the stock checking to the regular _onChangeCombination method
+     * Adds the event availability checking to the regular _onChangeCombination method
      * @override
      */
     _onChangeCombination: function (){

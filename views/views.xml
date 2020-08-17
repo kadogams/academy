@@ -30,6 +30,11 @@
                     </group>
                 </xpath>
 
+                <xpath expr="//field[@name='public_categ_ids']" position="after">
+                    <field name="event_availability" string="Availability Status" widget="selection" attrs="{'invisible': [('event_set_ok', '!=', True)]}"/>
+                    <field name="event_available_threshold" attrs="{'invisible': ['|', ('event_set_ok', '!=', True), ('event_availability', '!=', 'threshold')], 'required': [('event_availability', '=', 'threshold'), ('event_set_ok', '=', True)]}"/>
+                </xpath>
+
             </field>
         </record>
 

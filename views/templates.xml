@@ -40,15 +40,16 @@
             </xpath>
         </template>
 
-        <!-- Select Quantity -->
-<!--        <template id="product_quantity_inherit_event_set" inherit_id="website_sale.product_quantity" name="Event Set Select Quantity">-->
-<!--            <xpath expr="//div[hasclass('css_quantity')]" position="attributes">-->
-<!--                <attribute name="t-if">not product.event_set_ok</attribute>-->
-<!--            </xpath>-->
-<!--        </template>-->
+        <!-- Product -->
+        <template id="product_inherit_event_set" inherit_id="website_sale.product" priority="4">
+            <xpath expr="//a[@id='add_to_cart']" position="after">
+                <div class="event_availability_messages o_not_editable"/>
+            </xpath>
+        </template>
 
         <!-- Shopping Cart Lines -->
         <template id="cart_lines_inherit_event_set" inherit_id="website_sale.cart_lines" name="Event Set Shopping Cart Lines">
+
             <!-- Add conditions in order to avoid conflict with the Stock module -->
             <xpath expr="//input[@type='text'][hasclass('quantity')]" position="attributes">
                 <attribute name="t-if">not line.event_set_ok</attribute>
@@ -58,9 +59,10 @@
                        t-att-data-max="(line.product_uom_qty + (line.product_id.event_seats_available - line.product_id.cart_qty)) if line.product_id.event_seats_availability == 'limited' else None"/>
             </xpath>
 
-<!--            <xpath expr="//div[hasclass('css_quantity')]" position="attributes">-->
+            <xpath expr="//div[hasclass('css_quantity')]" position="after">
+                <div class='event_availability_messages'/>
+            </xpath>
 
-<!--            </xpath>-->
         </template>
 
         <!-- Remove information about delivery on the product page -->
