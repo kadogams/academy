@@ -1,3 +1,3 @@
-# odoo-event-set
+# academy
 
 Playing around with Odoo
