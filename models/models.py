@@ -143,9 +143,9 @@ class ProductProduct(models.Model):
         for record in self:
             limited = False
             qty = sys.maxsize
-            print('record: ', record.id, record.name, [x.name for x in record.product_template_attribute_value_ids])
+            # print('record: ', record.id, record.name, [x.name for x in record.product_template_attribute_value_ids])
             for event in record.event_ids:
-                print('\tevent: :', event.id, event.name, event.seats_availability, event.seats_available)
+                # print('\tevent: :', event.id, event.name, event.seats_availability, event.seats_available)
                 if event.seats_availability == 'limited' and event.seats_available < qty:
                     limited = True
                     qty = event.seats_available
@@ -161,40 +161,3 @@ class ProductProduct(models.Model):
         cart = website.sale_get_order()
         for product in self:
             product.cart_qty = sum(cart.order_line.filtered(lambda p: p.product_id.id == product.id).mapped('product_uom_qty')) if cart else 0
-
-
-class ProductAttributeValue(models.Model):
-    """Add a limit date attribute to the product attributes.
-
-    """
-    _inherit = "product.attribute.value"
-
-    limit_date = fields.Datetime('Limit date', translate=True, help='Maximum availability date of the variant.')
-
-
-class ProductTemplateAttributeValue(models.Model):
-    """Take into account the `limit_date` to define if the attribute is active or not.
-
-    """
-    _inherit = "product.template.attribute.value"
-
-    def _only_active(self):
-        """Return false if `ptav_active` is set to False or if `limit_date` is set and is expired.
-        """
-        return self.filtered(lambda ptav: ptav.ptav_active
-                                          and (not ptav.product_attribute_value_id.limit_date
-                                               or ptav.product_attribute_value_id.limit_date > fields.Datetime.now()))
-
-# class academy(models.Model):
-#     _name = 'academy.academy'
-#     _description = 'academy.academy'
-
-#     name = fields.Char()
-#     value = fields.Integer()
-#     value2 = fields.Float(compute="_value_pc", store=True)
-#     description = fields.Text()
-#
-#     @api.depends('value')
-#     def _value_pc(self):
-#         for record in self:
-#             record.value2 = float(record.value) / 100

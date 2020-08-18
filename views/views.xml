@@ -70,41 +70,6 @@
         	</field>
         </record>
 
-<!--        <record id="product_attribute_view_form_with_limit_date" model="ir.ui.view">-->
-<!--        	<field name="name">product.attribute.form.inherit</field>-->
-<!--        	<field name="model">product.attribute</field>-->
-<!--        	<field name="inherit_id" ref="product.product_attribute_view_form"/>-->
-<!--        	<field name="arch" type="xml">-->
-<!--                <xpath expr="//field[@name='value_ids']/tree" position="inside">-->
-<!--                    <field name="limit_date"/>-->
-<!--                </xpath>-->
-<!--        	</field>-->
-<!--        </record>-->
-
-<!--        <record id="product_product_view_form_easy_inherit_website_sale_with_limit_date" model="ir.ui.view">-->
-<!--            <field name="name">product.product.view.form.easy.inherit.website_sale.2</field>-->
-<!--            <field name="model">product.product</field>-->
-<!--            <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <sheet position="inside">-->
-<!--                    <group name="product_variant_limit_date" string="Variant Limit Date">-->
-<!--                        <field name="limit_date"/>-->
-<!--                    </group>-->
-<!--                </sheet>-->
-<!--            </field>-->
-<!--        </record>-->
-
-<!--         <record id="product_normal_form_view_with_limit_date" model="ir.ui.view">-->
-<!--        	<field name="name">product.product.form.2</field>-->
-<!--        	<field name="model">product.product</field>-->
-<!--        	<field name="inherit_id" ref="product.product_normal_form_view"/>-->
-<!--        	<field name="arch" type="xml">-->
-<!--            	<field name="barcode" position="after">-->
-<!--                		<field name="limit_date"/>-->
-<!--            	</field>-->
-<!--        	</field>-->
-<!--         </record>-->
-
     <!-- explicit list view definition -->
 <!--
     <record model="ir.ui.view" id="academy.list">
