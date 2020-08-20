@@ -13,14 +13,14 @@ class SaleOrderLine(models.Model):
         no more available.
         """
         if confirm:
-            print('\nSaleOrderLine._update_registrations')
+            # print('\nSaleOrderLine._update_registrations')
             Registration = self.env['event.registration'].sudo()
             for so_line in self.filtered('event_set_ok'):
-                print('event_set_ok')
+                # print('event_set_ok')
                 att_data = {'sale_order_line_id': so_line}
                 att_data = Registration._prepare_attendee_values(att_data)
                 for event in so_line.product_id.event_ids:
-                    print('\n', so_line.id, att_data)
+                    # print('\n', so_line.id, att_data)
                     seats_available = event.seats_available
                     att_data.update({'event_id': event.id})
                     for count in range(int(so_line.product_uom_qty)):

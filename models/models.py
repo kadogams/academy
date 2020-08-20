@@ -124,7 +124,7 @@ class ProductProduct(models.Model):
 
     @api.depends('event_ids.date_tz', 'event_ids.date_begin')
     def _compute_event_is_expired(self):
-        print('\n_compute_event_is_expired')
+        # print('\n_compute_event_is_expired')
         for record in self:
             record.event_is_expired = False
             for event in record.event_ids:
@@ -139,7 +139,7 @@ class ProductProduct(models.Model):
     # maybe use seats_expected?
     @api.depends('event_ids.seats_availability', 'event_ids.seats_available')
     def _compute_event_seats(self):
-        print('\n_compute_event_seats')
+        # print('\n_compute_event_seats')
         for record in self:
             limited = False
             qty = sys.maxsize
