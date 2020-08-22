@@ -36,6 +36,9 @@ class ProductTemplate(models.Model):
         ('threshold', 'Show availability below a threshold'),
     ], string='Event Availability', help='Adds an event availability status on the web product page.')
     event_available_threshold = fields.Integer(string='Availability Threshold', default=5)
+    event_ids = fields.Many2many('event.event', string='Events', help='Buying the product will automatically register '
+                                                                      'the user to the events.',
+                                 compute='_compute_event_ids', inverse='_set_event_ids', store=True)
 
     @api.constrains('event_set_ok', 'type')
     def _check_event_set_type(self):
@@ -45,7 +48,7 @@ class ProductTemplate(models.Model):
         if self.event_set_ok and self.type != 'service':
             raise ValidationError("The type of an Event Set must be a Service")
 
-    @api.constrains('event_set_ok', 'product_variant_ids.event_ids')
+    @api.constrains('event_set_ok', 'product_variant_ids')
     def _check_event_set_variants(self):
         """Check if the there is not any existing relationships between the product variants of an Event Set and Event
         records before modifying the field.
@@ -59,6 +62,37 @@ class ProductTemplate(models.Model):
     def _onchange_event_set_ok(self):
         if self.event_set_ok:
             self.type = 'service'
+
+    @api.depends('product_variant_ids', 'product_variant_ids.event_ids')
+    def _compute_event_ids(self):
+        print('\n_compute_event_ids')
+        unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
+        for template in unique_variants:
+            print(template.product_variant_ids.event_ids.name)
+            print(template.product_variant_ids.event_ids.id)
+            # replaces all existing records in the set
+            # template.event_ids = [(6, 0, template.product_variant_ids.event_ids.id)]
+        for template in (self - unique_variants):
+            # removes all records from the set
+            # template.event_ids = [(5,)]
+            pass
+
+    @api.depends('product_variant_ids', 'product_variant_ids.event_ids')
+    def _set_event_ids(self):
+        print('\n_set_event_ids')
+        unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
+        for template in unique_variants:
+            print('product before', [(e.name, e.id) for e in template.product_variant_ids.event_ids])
+            # replaces all existing records in the set
+            template.product_variant_ids.event_ids = [(6, 0, [event.id for event in template.event_ids])]
+            print('unique_variant', template.name)
+            print('template', [(e.name, e.id) for e in template.product_variant_ids.event_ids])
+            print('product', [(e.name, e.id) for e in template.product_variant_ids.event_ids])
+        for template in (self - unique_variants):
+            print('other', template.name)
+            # removes all records from the set
+            # template.event_ids = [(5,)]
+            pass
 
     def _get_combination_info(self, combination=False, product_id=False, add_qty=1, pricelist=False,
                               parent_combination=False, only_template=False):
@@ -122,7 +156,7 @@ class ProductProduct(models.Model):
         if self.event_set_ok:
             self.type = 'service'
 
-    @api.depends('event_ids.date_tz', 'event_ids.date_begin')
+    @api.depends('event_ids', 'event_ids.date_tz', 'event_ids.date_begin')
     def _compute_event_is_expired(self):
         # print('\n_compute_event_is_expired')
         for record in self:
@@ -134,10 +168,10 @@ class ProductProduct(models.Model):
                 if begin_tz < current_tz:
                     record.event_is_expired = True
                     break
-            print(record.name, record.event_is_expired)
+            # print(record.name, record.event_is_expired)
 
     # maybe use seats_expected?
-    @api.depends('event_ids.seats_availability', 'event_ids.seats_available')
+    @api.depends('event_ids', 'event_ids.seats_availability', 'event_ids.seats_available')
     def _compute_event_seats(self):
         # print('\n_compute_event_seats')
         for record in self:
@@ -151,7 +185,7 @@ class ProductProduct(models.Model):
                     qty = event.seats_available
             record.event_seats_availability = limited and 'limited' or 'unlimited'
             record.event_seats_available = limited and qty or 0
-            print('\t', record.event_seats_availability, record.event_seats_available)
+            # print('\t', record.event_seats_availability, record.event_seats_available)
 
     def _compute_cart_qty(self):
         website = ir_http.get_request_website()

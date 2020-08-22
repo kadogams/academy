@@ -30,6 +30,16 @@
                     </group>
                 </xpath>
 
+                <xpath expr="//notebook" position="inside">
+                    <page name="event_set" string="Event Set" attrs="{'invisible': [('product_variant_count', '>', 1), ('event_set_ok', '!=', True)]}">
+                        <group name="event_set" string="template">
+                            <field name="event_ids" widget="many2many_tags" attrs="{'invisible': [('product_variant_count', '>', 1)]}"/>
+<!--                            <field name="event_seats_available"/>-->
+<!--                            <field name="event_is_expired"/>-->
+                        </group>
+                    </page>
+                </xpath>
+
                 <xpath expr="//field[@name='public_categ_ids']" position="after">
                     <field name="event_availability" string="Availability Status" widget="selection" attrs="{'invisible': [('event_set_ok', '!=', True)]}"/>
                     <field name="event_available_threshold" attrs="{'invisible': ['|', ('event_set_ok', '!=', True), ('event_availability', '!=', 'threshold')], 'required': [('event_availability', '=', 'threshold'), ('event_set_ok', '=', True)]}"/>
@@ -46,7 +56,7 @@
                 <xpath expr="//notebook" position="inside">
                     <page name="event_set" string="Event Set" attrs="{'invisible':[('event_set_ok', '!=', True)]}">
                         <group name="event_set">
-                            <field name="event_ids" widget="many2many_tags"/>
+                            <field name="event_ids" string="product" widget="many2many_tags"/>
                             <field name="event_seats_available"/>
 <!--                            <field name="event_is_expired"/>-->
                         </group>

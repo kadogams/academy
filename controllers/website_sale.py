@@ -10,7 +10,8 @@ from odoo.exceptions import ValidationError
 class WebsiteSaleEventSet(WebsiteSale):
     @http.route()
     def cart_update(self, **kwargs):
-        """Cart update override to express checkout if the product is an Event Set.
+        """Cart update override to express checkout if the product is an Event Set and reproduce the behaviour when
+        buying an event ticket.
 
         """
         product_tmpl_id = kwargs.get('product_template_id')
