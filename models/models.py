@@ -102,7 +102,7 @@ class ProductTemplate(models.Model):
 
     def _get_combination_info(self, combination=False, product_id=False, add_qty=1, pricelist=False,
                               parent_combination=False, only_template=False):
-        """Override function in order to add information.
+        """Override function in order to add information about event sets.
 
         """
         combination_info = super(ProductTemplate, self)._get_combination_info(
@@ -121,6 +121,7 @@ class ProductTemplate(models.Model):
                 'event_set_ok': product.event_set_ok,
                 'event_availability': product.event_availability,
                 'event_available_threshold': product.event_available_threshold,
+                'event_is_expired': product.event_is_expired,
                 'product_template': product.product_tmpl_id.id,
                 'cart_qty': product.cart_qty,
                 'uom_name': product.uom_id.name,
@@ -201,3 +202,16 @@ class ProductProduct(models.Model):
         cart = website.sale_get_order()
         for product in self:
             product.cart_qty = sum(cart.order_line.filtered(lambda p: p.product_id.id == product.id).mapped('product_uom_qty')) if cart else 0
+
+
+# class ProductTemplateAttributeValue(models.Model):
+#     """Take into account the event sets' begin date to define if an attribute is active or not.
+#     """
+#     _inherit = "product.template.attribute.value"
+#
+#     def _only_active(self):
+#         """Return false if `ptav_active` is set to False or if it is an expired event set.
+#         """
+#         return self.filtered(lambda ptav: ptav.ptav_active
+#                                           and (not ptav.product_attribute_value_id.limit_date
+#                                                or ptav.product_attribute_value_id.limit_date > fields.Datetime.now()))

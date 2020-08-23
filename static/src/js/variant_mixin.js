@@ -46,25 +46,31 @@ VariantMixin._onChangeCombinationEventSet = function (ev, $parent, combination) 
 
     $parent.find('#add_to_cart').removeClass('out_of_stock');
     $parent.find('#buy_now').removeClass('out_of_stock');
-    if (combination.event_set_ok && combination.event_seats_availability === "limited") {
-        combination.event_seats_available -= parseInt(combination.cart_qty);
-        if (combination.event_seats_available < 0) {
-            combination.event_seats_available = 0;
-        }
-        // Handle case when manually write in input
-        if (qty > combination.event_seats_available) {
-            var $input_add_qty = $parent.find('input[name="add_qty"]');
-            qty = combination.event_seats_available || 1;
-            $input_add_qty.val(qty);
-        }
-        if (qty > combination.event_seats_available
-            || combination.event_seats_available < 1 || qty < 1) {
+    if (combination.event_set_ok) {
+        if (combination.event_is_expired) {
             $parent.find('#add_to_cart').addClass('disabled out_of_stock');
             $parent.find('#buy_now').addClass('disabled out_of_stock');
         }
+        else if (combination.event_seats_availability === "limited") {
+            combination.event_seats_available -= parseInt(combination.cart_qty);
+            if (combination.event_seats_available < 0) {
+                combination.event_seats_available = 0;
+            }
+            // Handle case when manually write in input
+            if (qty > combination.event_seats_available) {
+                var $input_add_qty = $parent.find('input[name="add_qty"]');
+                qty = combination.event_seats_available || 1;
+                $input_add_qty.val(qty);
+            }
+            if (qty > combination.event_seats_available
+                || combination.event_seats_available < 1 || qty < 1) {
+                $parent.find('#add_to_cart').addClass('disabled out_of_stock');
+                $parent.find('#buy_now').addClass('disabled out_of_stock');
+            }
+        }
     }
 
-    console.log(combination)
+    console.log('combination: ', combination)
     xml_load.then(function () {
         $('.oe_website_sale')
             .find('.event_availability_message_' + combination.product_template)
@@ -74,8 +80,6 @@ VariantMixin._onChangeCombinationEventSet = function (ev, $parent, combination) 
             'academy.product_availability',
             combination
         ));
-        console.log("bbb", $message)
-
         $('div.event_availability_messages').html($message);
         // $('strong.attribute_name').html("ayayaya");
     });

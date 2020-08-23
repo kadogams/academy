@@ -3,7 +3,10 @@
 <templates>
 
     <t t-name="academy.product_availability">
-        <t t-if="event_set_ok and event_seats_availability == 'limited'">
+        <t t-if="event_is_expired">
+            <div t-attf-class="event_availability_message_#{product_template} text-danger mt16"><i class="fa fa-exclamation-triangle" role="img" aria-label="Warning" title="Warning"/> Not available anymore</div>
+        </t>
+        <t t-elif="event_set_ok and event_seats_availability == 'limited'">
             <t t-if="event_seats_available gt 0">
                 <div t-if="event_availability == 'always'" t-attf-class="event_availability_message_#{product_template} text-success mt16">
                     <t t-esc="event_seats_available" /> <t t-esc="uom_name" /> available
