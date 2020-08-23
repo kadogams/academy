@@ -49,10 +49,16 @@
                         <group name="event_set">
 <!--                            <field name="event_ids" widget="many2many_tags" attrs="{'invisible': [('product_variant_count', '>', 1)]}"/>-->
                             <field name="event_ids" widget="many2many_tags"/>
-<!--                            <field name="event_seats_available" attrs="{'invisible': [('product_variant_count', '>', 1)]}"/>-->
-<!--                            <field name="event_is_expired" attrs="{'invisible': [('product_variant_count', '>', 1)]}"/>-->
-                            <field name="is_product_variant"/>
-                            <field name="product_variant_count"/>
+                            <label for="event_seats_availability"/>
+                            <div>
+                                <field name="event_seats_availability"/>
+                                <span  attrs="{'invisible': [('event_seats_availability', '=', 'unlimited')]}" class="oe_read_only">
+                                    to
+                                </span>
+                                <field name="event_seats_available" attrs="{'invisible': [('event_seats_availability', '=', 'unlimited')]}"/>
+                            </div>
+
+<!--                            <field name="event_is_expired"/>-->
                         </group>
                     </page>
                 </xpath>
@@ -69,10 +75,15 @@
                     <page name="event_set" string="Event Set" attrs="{'invisible': [('event_set_ok', '!=', True)]}">
                         <group name="event_set">
                             <field name="event_ids" widget="many2many_tags"/>
-                            <field name="event_seats_available"/>
-                            <field name="event_is_expired"/>
-                            <field name="is_product_variant"/>
-                            <field name="product_variant_count"/>
+                            <label for="event_seats_availability"/>
+                            <div>
+                                <field name="event_seats_availability"/>
+                                <span  attrs="{'invisible': [('event_seats_availability', '=', 'unlimited')]}" class="oe_read_only">
+                                    to
+                                </span>
+                                <field name="event_seats_available" attrs="{'invisible': [('event_seats_availability', '=', 'unlimited')]}"/>
+                            </div>
+<!--                            <field name="event_is_expired"/>-->
                         </group>
                     </page>
                 </xpath>
@@ -88,7 +99,14 @@
                     <group name="event_set" string="Event Set" attrs="{'invisible':[('event_set_ok', '!=', True)]}">
                         <field name="event_set_ok" invisible="1"/>
                         <field name="event_ids" widget="many2many_tags"/>
-                        <field name="event_seats_available"/>
+                            <label for="event_seats_availability"/>
+                            <div>
+                                <field name="event_seats_availability"/>
+                                <span  attrs="{'invisible': [('event_seats_availability', '=', 'unlimited')]}" class="oe_read_only">
+                                    to
+                                </span>
+                                <field name="event_seats_available" attrs="{'invisible': [('event_seats_availability', '=', 'unlimited')]}"/>
+                            </div>
                     </group>
                 </xpath>
         	</field>

@@ -39,6 +39,11 @@ class ProductTemplate(models.Model):
     event_ids = fields.Many2many('event.event', string='Events', help='Buying the product will automatically register '
                                                                       'the user to the events.',
                                  compute='_compute_event_ids', inverse='_set_event_ids', store=True)
+    event_seats_availability = fields.Selection([('limited', 'Limited'), ('unlimited', 'Unlimited')],
+                                                string='Maximum Attendees', store=True, readonly=True,
+                                                compute='_compute_event_seats')
+    event_seats_available = fields.Integer('Available Seats', store=True, readonly=True,
+                                           compute='_compute_event_seats')
 
     @api.constrains('event_set_ok', 'type')
     def _check_event_set_type(self):
@@ -82,6 +87,18 @@ class ProductTemplate(models.Model):
         for template in (self - unique_variants):
             # removes all records from the set
             template.event_ids = [(5,)]
+
+    @api.depends('product_variant_ids', 'product_variant_ids.event_seats_availability',
+                 'product_variant_ids.event_seats_available')
+    def _compute_event_seats(self):
+        print('\n_compute_event_seats template')
+        unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
+        for template in unique_variants:
+            template.event_seats_availability = template.product_variant_ids.event_seats_availability
+            template.event_seats_available = template.product_variant_ids.event_seats_available
+        for template in (self - unique_variants):
+            template.event_seats_availability = None
+            template.event_seats_available = None
 
     def _get_combination_info(self, combination=False, product_id=False, add_qty=1, pricelist=False,
                               parent_combination=False, only_template=False):
@@ -129,7 +146,7 @@ class ProductProduct(models.Model):
     event_ids = fields.Many2many('event.event', string='Events',
                                  help='Buying the product will automatically register the user to the events.')
     event_seats_availability = fields.Selection([('limited', 'Limited'), ('unlimited', 'Unlimited')],
-                                                string='Available Seat', store=True, readonly=True,
+                                                string='Maximum Attendees', store=True, readonly=True,
                                                 compute='_compute_event_seats')
     event_seats_available = fields.Integer('Available Seats', store=True, readonly=True,
                                            compute='_compute_event_seats')
@@ -162,7 +179,7 @@ class ProductProduct(models.Model):
     # maybe use seats_expected?
     @api.depends('event_ids', 'event_ids.seats_availability', 'event_ids.seats_available')
     def _compute_event_seats(self):
-        # print('\n_compute_event_seats')
+        print('\n_compute_event_seats')
         for record in self:
             limited = False
             qty = sys.maxsize
