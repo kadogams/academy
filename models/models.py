@@ -65,34 +65,23 @@ class ProductTemplate(models.Model):
 
     @api.depends('product_variant_ids', 'product_variant_ids.event_ids')
     def _compute_event_ids(self):
-        print('\n_compute_event_ids')
         unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
         for template in unique_variants:
-            print(template.product_variant_ids.event_ids.name)
-            print(template.product_variant_ids.event_ids.id)
             # replaces all existing records in the set
-            # template.event_ids = [(6, 0, template.product_variant_ids.event_ids.id)]
+            template.event_ids = [(6, 0, [event.id for event in template.product_variant_ids.event_ids])]
         for template in (self - unique_variants):
             # removes all records from the set
-            # template.event_ids = [(5,)]
-            pass
+            template.event_ids = [(5,)]
 
     @api.depends('product_variant_ids', 'product_variant_ids.event_ids')
     def _set_event_ids(self):
-        print('\n_set_event_ids')
         unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
         for template in unique_variants:
-            print('product before', [(e.name, e.id) for e in template.product_variant_ids.event_ids])
             # replaces all existing records in the set
             template.product_variant_ids.event_ids = [(6, 0, [event.id for event in template.event_ids])]
-            print('unique_variant', template.name)
-            print('template', [(e.name, e.id) for e in template.product_variant_ids.event_ids])
-            print('product', [(e.name, e.id) for e in template.product_variant_ids.event_ids])
         for template in (self - unique_variants):
-            print('other', template.name)
             # removes all records from the set
-            # template.event_ids = [(5,)]
-            pass
+            template.event_ids = [(5,)]
 
     def _get_combination_info(self, combination=False, product_id=False, add_qty=1, pricelist=False,
                               parent_combination=False, only_template=False):
